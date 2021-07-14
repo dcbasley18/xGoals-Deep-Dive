@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Deep Dive Into xGoal Models</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Devin Basley and Sara Armstrong" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Deep Dive Into xGoal Models
+### Devin Basley and Sara Armstrong
+### July 12th, 2021
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Problems
+
+  - Assessing accuracy of MoneyPuck expected goals model
+  
+  - How well can shot angle and shot distance predict goals
+  
+  - What effect does distance and angle have on the xGoals model change over time?
+
+
+
+
+
+
+---
+
+## Data
+
+  - Data is from MoneyPuck
+  - Variables of interest are shot angle and shot distance
+&lt;table&gt;
+&lt;caption&gt;2019 Shots Data&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; season &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; homeTeamCode &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; awayTeamCode &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; goal &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; arenaAdjustedShotDistance &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; shotAngleAdjusted &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; shooterName &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; goalieNameForShot &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2019 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; TOR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; OTT &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.123106 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14.036243 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Brady Tkachuk &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Frederik Andersen &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2019 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; TOR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; OTT &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 74.000000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31.239215 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Nikita Zaitsev &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Frederik Andersen &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2019 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; TOR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; OTT &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.000000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.009554 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Morgan Rielly &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Craig Anderson &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2019 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; TOR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; OTT &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49.000000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.409883 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mitchell Marner &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Craig Anderson &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2019 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; TOR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; OTT &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 27.000000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.090277 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Dmytro Timashov &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Craig Anderson &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2019 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; TOR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; OTT &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.000000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.994617 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Dylan DeMelo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Frederik Andersen &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+## Moneypuck xGoals Calibration
+
+![](MoneyPuck xGoals Calibrate.png)
+
+
+
+
+---
+
+## Rink Calibration (Buffalo)
+
+![](BUF calibration.png)
+
+---
+
+## Rink Cablibration (Detroit)
+
+![](Det Calibration.png)
+
+
+
+---
+
+## Rink Calibration (Chicago)
+
+![](CHI_Calibrate.png)
+
+---
+
+## Rink Calibration (Vegas)
+
+![](VGK_Calibrate.png)
+
+
+
+---
+
+## Even Strength Calibration
+
+![](Even Strength Calibrate.png)
+---
+
+## Powerplay Calibration
+
+
+![](PowerPlay Calibrate.png)
+
+---
+
+## Penalty Kill Calbration
+
+![](Penaltykill Calibrate.png)
+
+---
+## Wristshot Calibration
+
+![](Wristshot Calibrate.png)
+---
+
+## Shot Angle Trends with Error Bars
+
+![](shot angle trends.png)
+---
+## Shot Distance Trends with Error Bars From 2010-2020
+
+![](shot distance trends.png)
+--- Shot Distance Trends 5 on 5 with Error Bars from 2010-2020
+
+![](distance trends 5 on 5.png)
+
+
+
+---
+## Shot Angle Trends From 2010-2020 with Error Bars
+
+![](shot angle trends.png)
+---
+## Shot Angle Trends 5 on 5 From 2010-2020
+![](angle trends 5 on 5.png)
+
+
+---
+## Bootstrapping
+
+- Method of resampling with replacement
+- Comparing bootstrap sample coefficient trends to model trends
+
+---
+## Bootstrap Distance Coefficient Trends From 2010-2019
+
+![](Bootstrap Distance Trends.png)
+---
+
+BootStrap Angle Coefficient Trends From 2010-2019
+
+![](Bootstrap Angle Trends.png)
+---
+## Discussion
+
+- Recap main points
+
+- Limitations
+
+- Next steps
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

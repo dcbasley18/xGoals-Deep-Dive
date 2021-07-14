@@ -3,7 +3,7 @@ title: "Deep Dive Into xGoal Models"
 
 author: 
   - "Devin Basley and Sara Armstrong" 
-date: 'July 12th, 2021'
+date: 'July 15th, 2021'
 output: 
   xaringan::moon_reader:
     css: xaringan-themer.css
@@ -46,7 +46,7 @@ library(data.table)
 #shots2020 <- read_csv("shots_data/shots_2020.csv")
 #shots0719 <- read.csv("shots_data/shots_2007-2019.csv")
 
-
+shots <- read.csv("shots_2019.csv")
 
 
 
@@ -56,9 +56,11 @@ library(data.table)
 
 ## Problems
 
+  - Assessing accuracy of MoneyPuck expected goals model
+  
   - How well can shot angle and shot distance predict goals
-  - How accurate is MoneyPuck expected goals model?
-  - 
+  
+  - What effect does distance and angle have on the xGoals model change over time?
 
 
 
@@ -71,7 +73,14 @@ library(data.table)
 
   - Data is from MoneyPuck
   - Variables of interest are shot angle and shot distance
-
+```{r echo=FALSE, fig.align='center', out.width= "10%", out.height="10%" }
+data <- shots %>%
+    select(season, homeTeamCode, awayTeamCode, goal, arenaAdjustedShotDistance,
+           shotAngleAdjusted, shooterName, goalieNameForShot)
+library(knitr)
+library(kableExtra)
+kable(head(data), caption = "2019 Shots Data")
+```
 
 
 ---
@@ -81,12 +90,6 @@ library(data.table)
 
 
 
-
----
-
-## Rink Calibration (Buffalo)
-
-![](BUF calibration.png)
 
 ---
 
@@ -128,19 +131,51 @@ library(data.table)
 
 ![](Penaltykill Calibrate.png)
 
----
-## Wristshot Calibration
 
-![](Wristshot Calibrate.png)
 ---
-## Shot Distance with Error Bars
+
+## Shot Distance Trends with Error Bars From 2010-2020
 
 ![](shot distance trends.png)
+--- 
+## Shot Distance Trends 5 on 5 with Error Bars from 2010-2020
+
+![](distance trends 5 on 5.png)
+
+
+
 ---
-## Shot Angle Trends with Error Bars
+## Shot Angle Trends From 2010-2020 with Error Bars
 
 ![](shot angle trends.png)
+---
+## Shot Angle Trends 5 on 5 From 2010-2020
+![](angle trends 5 on 5.png)
 
+
+---
+## Bootstrapping
+
+- Method of resampling with replacement
+- Comparing bootstrap sample coefficient trends to model trends
+
+---
+## Bootstrap Distance Coefficient Trends From 2010-2019
+
+![](Bootstrap Distance Trends.png)
+---
+
+BootStrap Angle Coefficient Trends From 2010-2019
+
+![](Bootstrap Angle Trends.png)
+---
+## Discussion
+
+- Recap main points
+
+- Limitations
+
+- Next steps
 
 
 
