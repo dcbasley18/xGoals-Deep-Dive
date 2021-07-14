@@ -3,7 +3,7 @@ title: "Deep Dive Into xGoal Models"
 
 author: 
   - "Devin Basley and Sara Armstrong" 
-date: 'July 12th, 2021'
+date: 'July 15th, 2021'
 output: 
   xaringan::moon_reader:
     css: xaringan-themer.css
@@ -42,7 +42,8 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(data.table)
-#shots <- read_csv("shots_data/shots_2020.csv")
+
+shots <- read_csv("shots_2020.csv")
 #shots2020 <- read_csv("shots_data/shots_2020.csv")
 #shots0719 <- read.csv("shots_data/shots_2007-2019.csv")
 
@@ -56,9 +57,11 @@ library(data.table)
 
 ## Problems
 
+  - Assessing accuracy of MoneyPuck expected goals model
+  
   - How well can shot angle and shot distance predict goals
-  - How accurate is MoneyPuck expected goals model?
-  - 
+  
+  - Does the effect distance and angle have on the xGoals model change over time?
 
 
 
@@ -69,11 +72,22 @@ library(data.table)
 
 ## Data
 
-  - Data is from MoneyPuck
+  - Using shot data from MoneyPuck
+  
   - Variables of interest are shot angle and shot distance
+  
+```{r echo=FALSE}
 
+data <- shots %>%
+    select(season, homeTeamCode, awayTeamCode, goal, arenaAdjustedShotDistance,
+           shotAngleAdjusted, shooterName, goalieNameForShot)
 
+library(knitr)
+library(kableExtra)
 
+kable(head(data), caption = "2020 Shots Data")
+
+```
 ---
 ## Moneypuck xGoals Calibration
 
@@ -136,13 +150,30 @@ library(data.table)
 ## Shot Distance with Error Bars
 
 ![](shot distance trends.png)
+![](distance trends 5 on 5.png)
+
+
 ---
 ## Shot Angle Trends with Error Bars
 
 ![](shot angle trends.png)
 
+![](angle trends 5 on 5.png)
 
 
+---
+## Bootstrapping
+
+- Brief description of methodology and why we wanted to use bootstrapping
+
+---
+## Discussion
+
+- Recap main points
+
+- Limitations
+
+- Next steps
 
 
 
