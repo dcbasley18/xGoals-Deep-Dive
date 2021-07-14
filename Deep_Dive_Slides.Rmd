@@ -137,14 +137,16 @@ kable(head(data), caption = "2019 Shots Data")
 ## Shot Distance Trends with Error Bars From 2010-2020
 
 ![](shot distance trends.png)
---- 
+
+---
+
 ## Shot Distance Trends 5 on 5 with Error Bars from 2010-2020
 
 ![](distance trends 5 on 5.png)
 
-
-
 ---
+
+
 ## Shot Angle Trends From 2010-2020 with Error Bars
 
 ![](shot angle trends.png)
@@ -162,12 +164,12 @@ kable(head(data), caption = "2019 Shots Data")
 ---
 ## Bootstrap Distance Coefficient Trends From 2010-2019
 
-![](Bootstrap Distance Trends.png)
+![](Bootstrap Distance Trend.png)
 ---
 
 BootStrap Angle Coefficient Trends From 2010-2019
 
-![](Bootstrap Angle Trends.png)
+![](Bootstrap Angle Trend.png)
 ---
 ## Discussion
 
