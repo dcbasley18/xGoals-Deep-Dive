@@ -1,0 +1,212 @@
+---
+title: "Deep Dive Into xGoal Models"
+
+author: 
+  - "Devin Basley and Sara Armstrong" 
+date: 'July 15th, 2021'
+output: 
+  xaringan::moon_reader:
+    self_contained: true
+    css: xaringan-themer.css
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+    fig.retina = 3,
+    out.width = "100%",
+    cache = FALSE,
+    echo = FALSE,
+    message = FALSE,
+    warning = FALSE,
+    fig.show = TRUE,
+    hiline = TRUE)
+```
+
+```{r xaringan-themer, include = FALSE, warning = FALSE}
+library(xaringanthemer)
+style_mono_accent(base_color = "#808080",
+  white_color = "#FFFFFF",
+  background_color = "#fff7e6",
+  base_font_size = "24px"
+)
+```
+
+
+
+
+
+
+```{r include = FALSE, warning = FALSE}
+# for setting up data
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(data.table)
+
+shots <- read_csv("shots_2020.csv")
+#shots2020 <- read_csv("shots_data/shots_2020.csv")
+#shots0719 <- read.csv("shots_data/shots_2007-2019.csv")
+
+#shots_19 <- read.csv("shots_2019.csv")
+
+
+
+
+```
+
+
+## Problems
+
+  - Assessing accuracy of MoneyPuck expected goals model
+  
+  - How well can shot angle and shot distance predict goals
+
+  - Does the effect distance and angle have on the xGoals model change over time?
+
+---
+
+## Data
+
+  - Using shot data from MoneyPuck
+  
+  - Variables of interest are shot angle and shot distance
+
+```{r echo=FALSE, fig.align = 'center', out.width= "0.5%", out.height= ".1%" }
+data <- shots %>%
+    select(season, arenaAdjustedShotDistance, shotAngleAdjusted, goal, xGoal)
+#library(knitr)
+#library(kableExtra)
+#kable(head(data[, 1:8]), caption = "2020 Shots Data")
+
+library(gt)
+data %>%
+  slice(1:5) %>%
+  gt()
+
+
+```
+
+
+---
+## Moneypuck xGoals Calibration
+
+![](MoneyPuck xGoals Calibrate.png)
+
+
+
+
+---
+
+## Rink Calibration (Detroit)
+
+![](Det Calibration.png)
+
+
+
+
+---
+
+## Rink Calibration (Chicago)
+
+![](CHI_Calibrate.png)
+
+---
+
+## Rink Calibration (Vegas)
+
+![](VGK_Calibrate.png)
+
+
+
+---
+
+## Even Strength Calibration
+
+![](Even Strength Calibrate.png)
+---
+
+## Powerplay Calibration
+
+
+![](PowerPlay Calibrate.png)
+
+---
+
+## Penalty Kill Calibration
+
+![](Penaltykill Calibrate.png)
+
+
+---
+
+## Shot Distance Trends with Error Bars From 2010-2020
+
+![](shot distance trends.png)
+
+---
+
+
+## Shot Distance Trends 5 on 5 with Error Bars from 2010-2020
+
+![](distance trends 5 on 5.png)
+
+---
+
+
+## Shot Angle Trends From 2010-2020 with Error Bars
+
+![](shot angle trends.png)
+---
+## Shot Angle Trends 5 on 5 From 2010-2020
+![](angle trends 5 on 5.png)
+
+
+---
+## Bootstrapping
+
+- Method of re sampling with replacement
+- Comparing bootstrap sample coefficient trends to model trends
+- Limit uncertainty for coefficient trends over time
+
+---
+## Bootstrap Distance Coefficient Trends From 2010-2019
+
+![](Shot Distance Boot.png)
+---
+
+## Bootstrap Angle Coefficient Trends From 2010-2019
+
+![](Shot Angle Boot.png)
+
+
+
+---
+## Discussion
+
+- Looked at how well calibrated MoneyPuck's xGoals model is for different conditions
+
+- Looked at coefficient trends over the past 10 seasons
+
+- Limitations
+--
+  -Data involves shortened seasons (i.e 2012-13, 2019-20, 2020-21)
+
+
+- What's next
+--
+ - Adding player age and goalie age as predictor variables to our model
+
+
+
+
+
+
+
+
+
+
+
+
+
+
