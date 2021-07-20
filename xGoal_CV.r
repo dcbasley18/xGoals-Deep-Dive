@@ -49,11 +49,11 @@ nhl_goal_loyo_cv_preds <-
             train_data <- shots %>%
               filter(season != test_season)
             
-            rebound_model <- glm(goal ~ arenaAdjustedShotDistance + shotAngleAdjusted,
+            xGoal_model <- glm(goal ~ arenaAdjustedShotDistance + shotAngleAdjusted,
                                  data = train_data,
                                  family = "binomial")
             
-            tibble(test_pred_probs = predict(rebound_model, 
+            tibble(test_pred_probs = predict(xGoal_model, 
                                              newdata = test_data,
                                              type = "response"),
                    test_actual = test_data$goal,
